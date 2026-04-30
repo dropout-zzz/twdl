@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+import re
+import argparse
+import requests
+import sys
+import traceback
+import meta_tags_parser
+
+ap = argparse.ArgumentParser()
+ap.add_argument('POST_URL')
+args = ap.parse_args()
+
+PATTERN = 'https://x.com/([a-z_]+)/status/([0-9]{19})'
+m = re.fullmatch(PATTERN, args.POST_URL)
+
+if m is None:
+  ap.error('unsupported url format')
+
+req_url = 'https://fxtwitter.com/%s/status/%s' % m.groups()
+
+print('fetching webpage.. ', file=sys.stderr, end='', flush=True)
+
+try:
+  resp = requests.get(req_url, timeout=(30, 120))
+  resp.raise_for_status()
+except requests.RequestException:
+  print('err', file=sys.stderr)
+  traceback.print_exc()
+  sys.exit(1)
+
+print('done', file=sys.stderr)
+
+tg = meta_tags_parser.parse_meta_tags_from_source(
+  resp.text,
+  options=meta_tags_parser.structs.SettingsFromUser(
+    what_to_parse=(
+      meta_tags_parser.structs.WhatToParse.OPEN_GRAPH,
+    )
+  )
+)
+
+for tag in tg.open_graph:
+  if tag.name == 'video':
+    print(tag.value)
+    break
+else:
+  print('cant extract vid url from response. was the post url right?', file=sys.stderr)
+  sys.exit(1)
