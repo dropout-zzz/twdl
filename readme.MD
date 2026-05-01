@@ -18,6 +18,10 @@ fetching webpage.. done
 https://video.twimg.com/amplify_video/2049482652802306048/vid/avc1/960x960/Bcj8RtTt2PGkAOHW.mp4?tag=21
 ```
 
+## todo
+
+- [ ] support gif
+
 ## license
 
 GLWTPL
