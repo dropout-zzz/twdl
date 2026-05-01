@@ -10,7 +10,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('POST_URL')
 args = ap.parse_args()
 
-PATTERN = 'https://x.com/([a-zA-Z_]+)/status/([0-9]{19})'
+PATTERN = 'https://x.com/([a-zA-Z0-9_]+)/status/([0-9]{19})'
 m = re.fullmatch(PATTERN, args.POST_URL)
 
 if m is None:
